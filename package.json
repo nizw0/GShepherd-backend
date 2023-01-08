@@ -1,0 +1,32 @@
+{
+  "name": "gshepherd-backend",
+  "version": "0.0.1",
+  "main": "app.js",
+  "type": "module",
+  "repository": "https://github.com/nizw0/GShepherd-backend",
+  "author": "nizw0",
+  "private": true,
+  "scripts": {
+    "start": "node --experimental-specifier-resolution=node app.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "connect-mongo": "^4.6.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "mongoose": "^6.8.2",
+    "passport": "0.5",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^7.1.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.31.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-import-resolver-node": "^0.3.6",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "prettier": "^2.8.1"
+  }
+}
