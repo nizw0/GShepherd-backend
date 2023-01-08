@@ -4,7 +4,7 @@ import { Strategy } from 'passport-local';
 import { Record } from '../models/record';
 import Room from '../models/room';
 import User from '../models/user';
-import checkObjectId from '../utils';
+import { checkObjectId } from '../utils';
 
 export function initAuth() {
   passport.use(new Strategy(User.authenticate()));
@@ -19,7 +19,9 @@ export function initAuth() {
  */
 export async function eventAuthLayer(req, res, next) {
   if (!req.isAuthenticated()) return res.status(401).end();
+
   const user = req.user;
+  if (user.role === 'admin') return next();
 
   const method = req.method;
   const path = req.url.substring(1);
@@ -63,7 +65,9 @@ export async function eventAuthLayer(req, res, next) {
  */
 export async function recordAuthLayer(req, res, next) {
   if (!req.isAuthenticated()) return res.status(401).end();
+
   const user = req.user;
+  if (user.role === 'admin') return next();
 
   const method = req.method;
   const path = req.url.substring(1);
@@ -101,7 +105,9 @@ export async function recordAuthLayer(req, res, next) {
  */
 export async function roomAuthLayer(req, res, next) {
   if (!req.isAuthenticated()) return res.status(401).end();
+
   const user = req.user;
+  if (user.role === 'admin') return next();
 
   const method = req.method;
   const path = req.url.substring(1);
@@ -144,9 +150,24 @@ export async function roomAuthLayer(req, res, next) {
  * @param {express.NextFunction} next
  */
 export async function userAuthLayer(req, res, next) {
-  if (!req.isAuthenticated()) return res.status(401).end();
-  const user = req.user;
-  const id = req.baseUrl.substring(1);
-  if (user.id !== id) return res.status(403).end();
+  switch (req.method) {
+    case 'GET':
+    case 'PUT':
+    case 'DELETE': {
+      if (!req.isAuthenticated()) return res.status(401).end();
+      const user = req.user;
+      if (user.role === 'admin') return next();
+      const id = req.path.substring(1);
+      if (id !== '') {
+        const isValid = checkObjectId(id);
+        if (!isValid) return res.status(400).end();
+        if (user.id !== id) return res.status(403).end();
+      }
+      break;
+    }
+    case 'POST':
+    default:
+      break;
+  }
   next();
 }

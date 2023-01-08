@@ -18,6 +18,7 @@ const recordSchema = new Schema(
       transform: function (doc, ret, options) {
         delete ret._id;
         delete ret.__v;
+        delete ret.__t;
       },
     },
     toObject: {
@@ -25,42 +26,110 @@ const recordSchema = new Schema(
       transform: function (doc, ret, options) {
         delete ret._id;
         delete ret.__v;
+        delete ret.__t;
       },
     },
-    discriminatorKey: 'category',
   }
 );
-const voteSchema = new Schema({
-  option: {
-    type: String,
-    require: true,
+const voteSchema = new Schema(
+  {
+    option: {
+      type: String,
+      require: true,
+    },
   },
-});
-const thoughtSchema = new Schema({
-  Idea: {
-    type: String,
-    require: true,
+  {
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret, options) {
+        delete ret._id;
+        delete ret.__v;
+        delete ret.__t;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: function (doc, ret, options) {
+        delete ret._id;
+        delete ret.__v;
+        delete ret.__t;
+      },
+    },
+  }
+);
+const thoughtSchema = new Schema(
+  {
+    idea: {
+      type: String,
+      require: true,
+    },
   },
-});
-const raffleSchema = new Schema({
-  name: {
-    type: Boolean,
-    default: true,
+  {
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret, options) {
+        delete ret._id;
+        delete ret.__v;
+        delete ret.__t;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: function (doc, ret, options) {
+        delete ret._id;
+        delete ret.__v;
+        delete ret.__t;
+      },
+    },
+  }
+);
+const raffleSchema = new Schema(
+  {
+    name: {
+      type: Boolean,
+      default: true,
+    },
+    address: {
+      type: Boolean,
+      default: true,
+    },
+    phone: {
+      type: Boolean,
+      default: true,
+    },
   },
-  address: {
-    type: Boolean,
-    default: true,
-  },
-  phone: {
-    type: Boolean,
-    default: true,
-  },
-});
+  {
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret, options) {
+        delete ret._id;
+        delete ret.__v;
+        delete ret.__t;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: function (doc, ret, options) {
+        delete ret._id;
+        delete ret.__v;
+        delete ret.__t;
+      },
+    },
+  }
+);
 
 const Record = model('record', recordSchema);
-const VoteRecord = Record.discriminator('voteRecord', voteSchema);
-const ThoughtRecord = Record.discriminator('thoughtRecord', thoughtSchema);
-const RaffleRecord = Record.discriminator('raffleRecord', raffleSchema);
+const VoteRecord = Record.discriminator('voteRecord', voteSchema, 'records');
+const ThoughtRecord = Record.discriminator(
+  'thoughtRecord',
+  thoughtSchema,
+  'records'
+);
+const RaffleRecord = Record.discriminator(
+  'raffleRecord',
+  raffleSchema,
+  'records'
+);
 export { Record, VoteRecord, ThoughtRecord, RaffleRecord };
 
 /**

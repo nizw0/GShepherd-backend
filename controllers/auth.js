@@ -18,10 +18,10 @@ export function checkAuth(req, res) {
  * @param {express.Request} req
  * @param {express.Response} res
  */
-export function login(req, res) {
+export async function login(req, res) {
   const { username } = req.body;
-  User.findOne({ username }).then(() => {
-    res.json({ msg: 'success' });
+  await User.findOne({ username }).then((data) => {
+    return res.json({ msg: data.id });
   });
 }
 
@@ -34,7 +34,6 @@ export function logout(req, res, next) {
   if (req.isAuthenticated()) {
     req.logout((err) => {
       if (err) return next(err);
-      res.redirect('/');
     });
     req.session.destroy((err) => {
       if (err) {

@@ -1,6 +1,6 @@
 import express from 'express';
 import { Event, getEventModel, VoteEvent } from '../models/event';
-import checkObjectId from '../utils';
+import { checkObjectId } from '../utils';
 
 /**
  * @param {express.Request} req
@@ -8,18 +8,28 @@ import checkObjectId from '../utils';
  */
 export async function createEvent(req, res) {
   const { category } = req.body;
-  const Model = getEventModel(category);
-  if (Model === null) {
-    return res.status(400);
+  const model = getEventModel(category);
+  if (model === null) {
+    return res.status(400).end();
   }
-  const event = await Model.create(req.body);
-  await event
-    .save()
+  
+  const event = await model
+    .create(req.body)
     .catch((err) => {
-      res.status(500).end();
+      return res.status(400).end();
     })
     .then((data) => {
-      res.json(data);
+      if (!(data instanceof model)) return res.status(404).end();
+      return data;
+    });
+  event
+    .save()
+    .catch((err) => {
+      return res.status(500).end();
+    })
+    .then((data) => {
+      if (!(data instanceof model)) return res.status(404).end();
+      return res.json(data);
     });
 }
 
@@ -33,8 +43,13 @@ export async function getEvent(req, res) {
   if (!isValid) return res.status(404).end();
 
   await Event.findById(id)
-    .catch((err) => res.status(404).end())
-    .then((data) => res.json(data));
+    .catch((err) => {
+      res.status(500).end();
+    })
+    .then((data) => {
+      if (data === null) return res.status(404).end();
+      return res.json(data);
+    });
 }
 
 /**
@@ -43,8 +58,13 @@ export async function getEvent(req, res) {
  */
 export async function getAllEvents(req, res) {
   await Event.find({})
-    .catch((err) => res.status(500).end())
-    .then((data) => res.json(data));
+    .catch((err) => {
+      res.status(500).end();
+    })
+    .then((data) => {
+      if (data === null) return res.status(404).end();
+      return res.json(data);
+    });
 }
 
 /**
@@ -53,13 +73,29 @@ export async function getAllEvents(req, res) {
  */
 export async function updateEvent(req, res) {
   const { id } = req.params;
-  const { category, roomId, name } = req.body;
+  const data = req.body;
   const isValid = checkObjectId(id);
   if (!isValid) return res.status(404).end();
 
-  await Event.updateOne({ id }, { category, roomId, name })
-    .catch((err) => res.status(500).end())
-    .then((data) => res.json(data));
+  const model = await Event.findById(id)
+    .catch(() => {
+      return res.status(500).end();
+    })
+    .then((data) => {
+      if (!(data instanceof Event)) return res.status(404).end();
+      return data;
+    });
+
+  await model
+    .update(req.body)
+    .catch((err) => {
+      console.log(err);
+      return res.status(500).end();
+    })
+    .then((data) => {
+      if (data === null) return res.status(404).end();
+      return res.json({ msg: 'success' });
+    });
 }
 
 /**
@@ -71,7 +107,12 @@ export async function deleteEvent(req, res) {
   const isValid = checkObjectId(id);
   if (!isValid) return res.status(404).end();
 
-  await Event.deleteOne({ id })
-    .catch((err) => res.status(500).end())
-    .then((data) => res.json(data));
+  await Event.findByIdAndDelete(id)
+    .catch((err) => {
+      res.status(500).end();
+    })
+    .then((data) => {
+      if (data === null) return res.status(404).end();
+      return res.json({ msg: 'success' });
+    });
 }

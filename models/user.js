@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import { model, Schema, VirtualType } from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
 
@@ -8,23 +9,13 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-    },
-    username: {
-      type: String,
-      required: false,
-      lowercase: true,
-      trim: true,
-      minLength: 5,
+      required: true,
       unique: true,
-    },
-    password: {
-      type: String,
-      required: false,
-      minLength: 8,
     },
     role: {
       type: String,
       default: 'user',
+      enum: ['user'],
     },
   },
   {
@@ -45,9 +36,6 @@ const userSchema = new Schema(
     timestamps: true,
   }
 );
-userSchema.pre(['save', '^update', 'findOneAndUpdate'], () => {
-  this.role = 'user';
-});
 userSchema.plugin(passportLocalMongoose);
 
 const User = model('user', userSchema);

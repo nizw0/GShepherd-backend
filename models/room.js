@@ -1,10 +1,20 @@
 import { model, Schema, SchemaTypes } from 'mongoose';
+import { getRandomCode } from '../utils';
 
 const roomSchema = new Schema(
   {
-    Admins: {
+    name: {
+      type: String,
+      required: true,
+    },
+    code: {
+      type: String,
+      default: getRandomCode(),
+    },
+    admins: {
       type: [SchemaTypes.ObjectId],
       default: [],
+      required: true,
     },
     createdBy: {
       type: SchemaTypes.ObjectId,

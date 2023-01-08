@@ -1,16 +1,16 @@
 import MongoStore from 'connect-mongo';
 import express from 'express';
 import passport from 'passport';
+import config from './config/index';
 import connectDB from './database';
 import { initAuth } from './middlewares/auth';
 import CORS from './middlewares/cors';
 import Session from './middlewares/session';
 import getRouter from './routes';
 
-const appURI = 'http://localhost:3000';
-const appPort = 3000;
-const mongoURI =
-  'mongodb://gsadmin:THISISNOTACUTEGSHEPHERD@139.162.39.223:27017/gshepherd';
+const appURI = config.uri;
+const appPort = config.port;
+const mongoURI = config.mongoURI;
 
 const app = express();
 const router = getRouter();
@@ -21,7 +21,7 @@ await connectDB(mongoURI).catch((err) => {
 const store = MongoStore.create({
   mongoUrl: mongoURI,
   ttl: 7 * 24 * 60 * 60,
-  collectionName: 'session',
+  collectionName: 'sessions',
 });
 initAuth();
 

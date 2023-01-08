@@ -4,6 +4,8 @@ import mongoose from 'mongoose';
  * @param {string} uri
  */
 export default async function connectDB(uri) {
+  mongoose.set('strictQuery', false);
+  
   await mongoose
     .connect(uri)
     .catch((err) => {

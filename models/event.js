@@ -23,6 +23,7 @@ const eventSchema = new Schema(
       transform: function (doc, ret, options) {
         delete ret._id;
         delete ret.__v;
+        delete ret.__t;
       },
     },
     toObject: {
@@ -30,27 +31,92 @@ const eventSchema = new Schema(
       transform: function (doc, ret, options) {
         delete ret._id;
         delete ret.__v;
+        delete ret.__t;
       },
     },
   }
 );
-const voteSchema = new Schema({
-  options: {
-    type: [String],
-    default: [],
+const voteSchema = new Schema(
+  {
+    options: {
+      type: [String],
+      default: [],
+    },
   },
-});
-const thoughtSchema = new Schema({});
-const raffleSchema = new Schema({
-  name: String,
-  address: String,
-  phoneNumber: String,
-});
+  {
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret, options) {
+        delete ret._id;
+        delete ret.__v;
+        delete ret.__t;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: function (doc, ret, options) {
+        delete ret._id;
+        delete ret.__v;
+        delete ret.__t;
+      },
+    },
+  }
+);
+const thoughtSchema = new Schema(
+  {},
+  {
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret, options) {
+        delete ret._id;
+        delete ret.__v;
+        delete ret.__t;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: function (doc, ret, options) {
+        delete ret._id;
+        delete ret.__v;
+        delete ret.__t;
+      },
+    },
+  }
+);
+const raffleSchema = new Schema(
+  {
+    name: String,
+    address: String,
+    phoneNumber: String,
+  },
+  {
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret, options) {
+        delete ret._id;
+        delete ret.__v;
+        delete ret.__t;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: function (doc, ret, options) {
+        delete ret._id;
+        delete ret.__v;
+        delete ret.__t;
+      },
+    },
+  }
+);
 
 const Event = model('event', eventSchema);
-const VoteEvent = model('voteEvent', voteSchema);
-const ThoughtEvent = Event.discriminator('thoughtEvent', thoughtSchema);
-const RaffleEvent = Event.discriminator('raffleEvent', raffleSchema);
+const VoteEvent = Event.discriminator('voteEvent', voteSchema, 'events');
+const ThoughtEvent = Event.discriminator(
+  'thoughtEvent',
+  thoughtSchema,
+  'events'
+);
+const RaffleEvent = Event.discriminator('raffleEvent', raffleSchema, 'events');
 export { Event, VoteEvent, ThoughtEvent, RaffleEvent };
 
 /**

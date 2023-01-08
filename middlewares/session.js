@@ -12,6 +12,6 @@ export default function sessionLayer(secret, store) {
     store,
     resave: true,
     saveUninitialized: false,
-    cookie: { maxAge: 60 * 1000 },
+    cookie: {},
   });
 }
