@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt';
 import { model, Schema, VirtualType } from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
 

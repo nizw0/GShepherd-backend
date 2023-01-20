@@ -12,7 +12,7 @@ export async function createEvent(req, res) {
   if (model === null) {
     return res.status(400).end();
   }
-  
+
   const event = await model
     .create(req.body)
     .catch((err) => {
@@ -73,21 +73,13 @@ export async function getAllEvents(req, res) {
  */
 export async function updateEvent(req, res) {
   const { id } = req.params;
-  const data = req.body;
+  const { category } = req.body;
   const isValid = checkObjectId(id);
   if (!isValid) return res.status(404).end();
 
-  const model = await Event.findById(id)
-    .catch(() => {
-      return res.status(500).end();
-    })
-    .then((data) => {
-      if (!(data instanceof Event)) return res.status(404).end();
-      return data;
-    });
+  const model = getEventModel(category);
 
-  await model
-    .update(req.body)
+  await model.findByIdAndUpdate(id, req.body)
     .catch((err) => {
       console.log(err);
       return res.status(500).end();

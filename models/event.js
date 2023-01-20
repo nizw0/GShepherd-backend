@@ -1,5 +1,5 @@
 import { model, Schema, SchemaTypes } from 'mongoose';
-import Category from '../enum/Category';
+import Category from '../enum/category';
 
 const eventSchema = new Schema(
   {
@@ -14,6 +14,10 @@ const eventSchema = new Schema(
     active: {
       type: Boolean,
       default: true,
+      required: true,
+    },
+    category: {
+      type: Number,
       required: true,
     },
   },
@@ -85,9 +89,18 @@ const thoughtSchema = new Schema(
 );
 const raffleSchema = new Schema(
   {
-    name: String,
-    address: String,
-    phoneNumber: String,
+    fullName: {
+      type: Boolean,
+      default: false,
+    },
+    address: {
+      type: Boolean,
+      default: false,
+    },
+    phone: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: {

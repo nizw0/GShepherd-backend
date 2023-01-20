@@ -1,5 +1,5 @@
 import { model, Schema, SchemaTypes } from 'mongoose';
-import Category from '../enum/Category';
+import Category from '../enum/category';
 
 const recordSchema = new Schema(
   {

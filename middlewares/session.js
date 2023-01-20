@@ -12,6 +12,11 @@ export default function sessionLayer(secret, store) {
     store,
     resave: true,
     saveUninitialized: false,
-    cookie: {},
+    cookie: {
+      httpOnly: true,
+      sameSite: true,
+      secure: false,
+      maxAge: 7 * 60 * 60 * 1000,
+    },
   });
 }

@@ -1,4 +1,5 @@
 import express from 'express';
+import { Event } from '../models/event';
 import { getRecordModel, Record } from '../models/record';
 import { checkObjectId } from '../utils';
 
@@ -7,8 +8,17 @@ import { checkObjectId } from '../utils';
  * @param {express.Response} res
  */
 export async function createRecord(req, res) {
-  const { category } = req.body;
-  const model = getRecordModel(category);
+  const { eventId } = req.body;
+  const event = await Event.findById(eventId)
+    .catch((err) => {
+      return res.status(400).end();
+    })
+    .then((data) => {
+      if (!(data instanceof Event)) return res.status(404).end();
+      return data;
+    });
+
+  const model = getRecordModel(event.category);
   if (model === null) {
     return res.status(400).end();
   }
@@ -73,20 +83,13 @@ export async function getAllRecords(req, res) {
  */
 export async function updateRecord(req, res) {
   const { id } = req.params;
+  const { category } = req.body;
   const isValid = checkObjectId(id);
   if (!isValid) return res.status(404).end();
 
-  const model = await Record.findById(id)
-    .catch(() => {
-      return res.status(500).end();
-    })
-    .then((data) => {
-      if (!(data instanceof Record)) return res.status(404).end();
-      return data;
-    });
+  const model = getRecordModel(category);
 
-  await model
-    .update(req.body)
+  await model.findByIdAndUpdate(id, req.body)
     .catch((err) => {
       console.log(err);
       return res.status(500).end();

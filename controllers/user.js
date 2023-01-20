@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt';
 import express from 'express';
 import mongoose from 'mongoose';
 import passport from 'passport';
@@ -78,11 +77,6 @@ export async function updateUser(req, res) {
 
   const user = await User.findById(id);
   if (!(user instanceof User)) return res.status(404).end();
-
-  const isEqual = await bcrypt.compare(password, user.password);
-  if (!isEqual) {
-    data.password = User.encryptPassword(password);
-  }
 
   await User.findByIdAndUpdate(id, data)
     .catch((err) => {
